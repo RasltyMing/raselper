@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/widget"
@@ -10,6 +11,8 @@ import (
 	"strings"
 )
 
+//go:embed icon.ico
+var icon []byte
 var nameWillSet = "RasltyMing" // 将要设置的Git显示名称
 
 func init() {
@@ -24,6 +27,11 @@ func init() {
 }
 
 func main() {
+	// 生成图标
+	//systray.Run(func() {
+	//	systray.SetIcon(icon)
+	//}, onExit)
+
 	// 绘制窗口
 	myApp := app.New()
 	myWindow := myApp.NewWindow("SwitchGitName")
@@ -57,4 +65,8 @@ func main() {
 	label.SetText(text)
 
 	myWindow.ShowAndRun()
+}
+
+func onExit() {
+	// clean up here
 }

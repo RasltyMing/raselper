@@ -2,12 +2,16 @@ package raselper
 
 import (
 	"bufio"
+	"embed"
 	"errors"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
 )
+
+//go:embed files/*
+var localFile embed.FS
 
 type Matcher func(file os.FileInfo) bool
 type FileNameHandler func(targetPath string) string
@@ -114,5 +118,34 @@ func InsertText(filePath string, from string, insert string) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func CopyLocalFile(localFileName string, targetPath string) error {
+	input, err := localFile.ReadFile(localFileName)
+	_ = os.MkdirAll(filepath.Dir(targetPath), os.ModePerm)
+	output, err := os.Create(targetPath)
+	if err != nil {
+		return err
+	}
+
+	if err != nil {
+		return err
+	}
+	_, err = output.Write(input)
+	if err != nil {
+		return err
+	}
+	if input == nil {
+		return errors.New(localFileName + "复制失败")
+	}
+
+	err = output.Close()
+	if err != nil {
+		return err
+	}
+
+	println("复制:", localFileName, " 到:", targetPath)
+
 	return nil
 }

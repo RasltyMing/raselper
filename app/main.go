@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/widget"
@@ -25,12 +24,20 @@ func init() {
 }
 
 func main() {
+	// 绘制窗口
+	myApp := app.New()
+	myWindow := myApp.NewWindow("SwitchGitName")
+	label := widget.NewLabel("")
+	myWindow.SetContent(label)
+	myWindow.Resize(fyne.NewSize(335, 120))
+
 	// 查看当前用户名
 	err, outStr, errStr := raselper.RunCmd("git config user.name")
 	if err != nil || errStr != "" {
-		fmt.Println(err)
-		fmt.Println(errStr)
+		label.SetText(err.Error() + "\n" + errStr)
 		return
+	} else {
+		label.SetText("用户名: " + outStr)
 	}
 
 	// 更改用户名
@@ -39,16 +46,15 @@ func main() {
 	}
 	err, _, errStr = raselper.RunCmd("git config --global user.name " + nameWillSet)
 	if err != nil || errStr != "" {
-		fmt.Println(err)
-		fmt.Println(errStr)
+		text := label.Text + "\n" + err.Error() + "\n" + errStr
+		label.SetText(text)
 		return
 	}
 
 	// 最后查看当前用户名
 	_, outStr, _ = raselper.RunCmd("git config user.name")
-	myApp := app.New()
-	myWindow := myApp.NewWindow("成功")
-	myWindow.SetContent(widget.NewLabel("新的用户名: " + outStr))
-	myWindow.Resize(fyne.NewSize(335, 120))
+	text := label.Text + "\n新的用户名: " + outStr
+	label.SetText(text)
+
 	myWindow.ShowAndRun()
 }

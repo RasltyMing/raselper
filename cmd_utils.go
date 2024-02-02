@@ -2,7 +2,6 @@ package raselper
 
 import (
 	"bytes"
-	"fmt"
 	"os/exec"
 	"runtime"
 )
@@ -11,7 +10,7 @@ func RunCmd(cmd string) (error error, outStr string, errStr string) {
 	var stdout, stderr bytes.Buffer
 	var cmdExec *exec.Cmd
 
-	fmt.Println("运行命令", cmd)
+	_ = Log("运行命令" + cmd)
 	switch runtime.GOOS {
 	case "windows":
 		//fmt.Println("当前操作系统是windows")
@@ -22,20 +21,20 @@ func RunCmd(cmd string) (error error, outStr string, errStr string) {
 		//fmt.Println("当前操作系统是linux")
 		cmdExec = exec.Command("sh", "-c", cmd)
 	default:
-		fmt.Println("当前操作系统未知")
+		_ = Log("当前操作系统未知")
 	}
 	cmdExec.Stdout = &stdout
 	cmdExec.Stderr = &stderr
 	err := cmdExec.Run()
 	if err != nil {
-		fmt.Println(err)
+		_ = Log(err.Error())
 		return err, "", ""
 	}
 	if stdout.String() != "" {
-		fmt.Println(stdout.String())
+		_ = Log(stdout.String())
 	}
 	if stderr.String() != "" {
-		fmt.Println(stderr.String())
+		_ = Log(stderr.String())
 	}
 	return nil, stdout.String(), stderr.String()
 }
